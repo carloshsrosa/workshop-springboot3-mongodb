@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.carloshsrosa.dto.UserDTO;
 import com.carloshsrosa.entities.User;
 import com.carloshsrosa.services.UserService;
 
@@ -19,9 +20,10 @@ public class UserResource {
 	private UserService service;
 
 	@GetMapping
-	public ResponseEntity<List<User>> users() {
+	public ResponseEntity<List<UserDTO>> users() {
 		List<User> users = service.findAll();
-		return ResponseEntity.ok().body(users);
+		List<UserDTO> usersDTO = users.stream().map(u -> new UserDTO(u)).toList();
+		return ResponseEntity.ok().body(usersDTO);
 	}
 
 }
