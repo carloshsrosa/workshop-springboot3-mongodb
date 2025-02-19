@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.carloshsrosa.dto.AuthorDTO;
+import com.carloshsrosa.dto.CommentDTO;
 import com.carloshsrosa.entities.Post;
 import com.carloshsrosa.entities.User;
 import com.carloshsrosa.repositories.PostRepository;
@@ -40,10 +41,24 @@ public class TestConfig implements CommandLineRunner {
 		Post p2 = new Post(null, Instant.parse("2018-03-23T04:57:13.561576Z"), "Bom dia", "Acordei feliz hoje!",
 				new AuthorDTO(u3));
 
-		postRepository.saveAll(Arrays.asList(p1, p2));
+		CommentDTO c1 = new CommentDTO("Boa viagem mano!", Instant.parse("2018-03-21T08:12:47.874573Z"),
+				new AuthorDTO(u2));
+
+		CommentDTO c2 = new CommentDTO("Aproveite!", Instant.parse("2018-03-22T01:41:25.124589Z"),
+				new AuthorDTO(u2));
 		
-		u3.getPosts().addAll(Arrays.asList(p1,p2));
+		CommentDTO c3 = new CommentDTO("Tenha um ótimo dia!", Instant.parse("2018-03-23T22:14:58.587541Z"),
+				new AuthorDTO(u2));
+		
+		postRepository.saveAll(Arrays.asList(p1, p2));
+
+		u3.getPosts().addAll(Arrays.asList(p1, p2));
 		userRepository.save(u3);
+		
+		p1.getComments().addAll(Arrays.asList(c1,c2));
+		p2.getComments().add(c3);
+		postRepository.saveAll(Arrays.asList(p1, p2));
+
 
 	}
 
