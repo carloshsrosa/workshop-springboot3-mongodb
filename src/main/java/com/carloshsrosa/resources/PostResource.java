@@ -1,5 +1,7 @@
 package com.carloshsrosa.resources;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,29 @@ public class PostResource {
 	public ResponseEntity<List<Post>> findByTitle(@RequestParam(defaultValue = "") String text) {
 		text = URL.decodeParam(text);
 		List<Post> posts = service.findByTitle(text);
+		return ResponseEntity.ok().body(posts);
+	}
+
+	@GetMapping(value = "/fullsearch")
+	public ResponseEntity<List<Post>> fullSearch(@RequestParam(defaultValue = "") String text,
+			@RequestParam(defaultValue = "") String minDate, @RequestParam(defaultValue = "") String maxDate) {
+		text = URL.decodeParam(text);
+		Instant auxiliarMinDate = Instant.now().minus(360, ChronoUnit.DAYS);
+		Instant auxiliarMaxDate = Instant.now();
+		Instant instantMinDate = null;
+		Instant instantMaxDate = null;
+		if (!minDate.isBlank()) {
+			instantMinDate = URL.convertDate(minDate, auxiliarMinDate);
+		} else {
+			instantMinDate = auxiliarMinDate;
+		}
+		if (!maxDate.isBlank()) {
+			instantMaxDate = URL.convertDate(maxDate, auxiliarMaxDate);
+		} else {
+			instantMaxDate = auxiliarMaxDate;
+		}
+		instantMaxDate = instantMaxDate.plus(24, ChronoUnit.HOURS);
+		List<Post> posts = service.fullSearch(text, instantMinDate, instantMaxDate);
 		return ResponseEntity.ok().body(posts);
 	}
 }
